@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="jquery-3.1.1.min.js"></script>
+    <script src="knockout-3.4.2.js"></script>
+	
+	<script type="text/javascript">
+		//var apiurl="https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/check"
+		//check jobid and password
+		 
+		$(document).ready(function() {
+
+            var customerViewModel = function() {
+            var self = this;
+            self.jobid = ko.observable("");
+            self.name = ko.observable("");
+            self.password = ko.observable("");
+            self.jKey = ko.observable("");
+			self.pKey = ko.observable("");
+				
+            self.getCustomerDetails = function () {            
+                $.ajax({
+                    url: 'https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/check',
+                    cache: false,
+                    type: 'GET',                   
+                    data: { "jobid": self.jKey(),"password": self.pKey() },
+                    success: function (data) {alert(data.Item.JobId);
+							document.cookie="userId=828";
+						if(data!=null){
+							if(data.Item.Role=="1"){
+								document.cookie="role=1";
+								window.location.href = "backindex.html"; 
+							}else if(data.Item.Role=="2"){
+								window.location.href = "backindex_2.html"; 
+							}else{
+								window.location.href = "backindex_3.html"; 
+							}
+							
+						}
+						
+						//alert(data.Item.JobId);
+//                        self.jobid(data.Item.JobId),
+//                        self.name(data.Item.Name)
+                    }
+					
+                });
+            }
+        }
+
+            var viewModel = new customerViewModel();
+            ko.applyBindings(viewModel);
+         });
+
+	</script>
+</head>
+
+<body>
+	<middle><h1>Welcome to Project Management</h1></middle>
+	<form>
+		<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+			<span class="input-group-text" >Job Id</span>
+		  </div>
+		  <input type="text" id="jKey" data-bind="value : jKey"/>
+		</div>
+	<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+			<span class="input-group-text">Passwods</span>
+		  </div>
+		  <input type="text" id="pKey" data-bind="value : pKey"/>
+		</div>
+		<input type="button" value="GetCustomerDetails" data-bind="click: $root.getCustomerDetails()"/>
+	</form>
+	<!--<table>
+        <tr>
+            <td>JobIdsearch:</td>
+            <td><input type="text" id="txtSearchKey1" data-bind="value : jKey"/></td>
+			<td>Passwordsearch:</td>
+			<td><input type="text" id="txtSearchKey2" data-bind="value : pKey"/></td>
+        </tr>
+    </table>-->
+
+    
+  
+  <!--<table>
+<tr>
+    <td><input type="button" value="GetCustomerDetails" data-bind="click: $root.getCustomerDetails()"/></td>
+</tr>
+  </table>-->
+</body>
+</html>

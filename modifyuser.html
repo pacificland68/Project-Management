@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="jquery-3.1.1.min.js"></script>
+    <script src="knockout-3.4.2.js"></script>
+</head>
+
+<body>
+	<h1>User:<strong><label id="name1" data-bind="text: name"/></strong> Modify Information</h1>
+	<div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Job Id</span>
+				<input type="text" class="form-control" id="jobid" aria-describedby="basic-addon3" data-bind="value:  jobid" disabled="disable">
+			</div>
+		</div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Name</span>
+				<input type="text" class="form-control" id="name" aria-describedby="basic-addon3" data-bind="value:  name">
+			</div>
+		</div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Role</span>
+				<select data-bind="value: role">
+				  <option value="1">Amin</option>
+				  <option value="2">Project Manager</option>
+				  <option value="3">Developer</option>
+				</select>
+<!--				<input type="text" class="form-control" id="role" aria-describedby="basic-addon3" data-bind="value:  role">-->
+			</div>
+		</div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Skills</span>
+				<input type="text" class="form-control" id="skills" aria-describedby="basic-addon3" data-bind="value: skills">
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary" data-bind="click: $root.submitDetails()">Modify</button>
+		<div id="m"></div>
+	</div>
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var customerViewModel = function() {
+				var self = this;
+				self.name = ko.observable("");
+				self.jobid = ko.observable("");
+				self.role = ko.observable("");
+				self.skills = ko.observable("");
+				
+				var query = window.location.search.substring(1);
+				var vars = query.split("&");
+				for (var i=0;i<vars.length;i++) {
+					   var pair = vars[0].split("=");
+					   if(pair[0] == "jobid"){
+						   //alert("title="+pair[1]);
+						   var u = ""+pair[1];
+						    var tt = u.replace(/%20/g," ");
+						   //alert("jobid="+tt);
+							   apiurl = "https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/searchuser";
+				 			
+							   $.ajax({
+								url: apiurl,
+								cache: false,
+								type: 'GET',   
+								data: { "jobid": tt},
+								success: function (data) {  
+									self.jobid(data.Item.JobId),
+									self.name(data.Item.Name),
+									self.role(data.Item.Role),
+									self.skills(data.Item.Skills)
+								}
+								   
+							});
+						   //alert('after='+self.name());
+					   }
+			   }
+				
+				self.submitDetails = function () {
+					$.ajax({
+								url: "https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/updateuser",
+								cache: false,
+								type: 'GET', 
+								dataType: 'json',
+								data: { "jobid": self.jobid(), "name": self.name(),
+									  "role": self.role(), "skills": self.skills()},
+								success: function (data) { 
+									//alert("data="+data.Attributes.Name),
+									if(data.Attributes.Name){}
+										alert('Successful Modify'),
+										self.jobid(data.Item.JobId),
+										self.name(data.Item.Name),
+										self.role(data.Item.Role),
+										self.skills(data.Item.Skills)
+								},
+								error: function(data){
+									alert('fail');
+								}
+								
+							});
+				}
+			}
+			var vm = new customerViewModel();
+            ko.applyBindings(vm);
+		});
+	</script>
+</body>
+</html>

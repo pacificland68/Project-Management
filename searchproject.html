@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="jquery-3.1.1.min.js"></script>
+    <script src="knockout-3.4.2.js"></script>
+	
+	
+</head>
+
+<body>
+	<h1>Project List</h1>
+	<div class="container">
+		<div class="row justify-content-between">
+			<div class="col-7">
+			  <form>
+				 <div class="input-group mb-3">
+				  <div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon3">Search Projects</span>
+				  </div>
+					 <input type="text" class="form-control" id="txtSearchKey1" data-bind="value : searchKey"/>
+<!--				  	<input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">-->
+					 <div class="input-group-append">
+						<!--<span class="input-group-text">submit</span>-->
+						 <button type="button" class="btn btn-success" value="GetCustomerDetails" data-bind="click: $root.getCustomerDetails()">Search</button>
+					  </div>
+				  </div>
+			  </form>
+			</div>
+		  </div>
+	</div>
+	<hr/>
+	<table class="table">
+	  <thead>
+		<tr>
+<!--		  <th scope="col">index</th>-->
+		  <th scope="col">Title</th>
+		  <th scope="col">Leader</th>
+		  <th scope="col">Start Time</th>
+		  <th scope="col">Deadline</th>
+		  <th scope="col">Status</th>
+		  <th scope="col">Create Time</th>
+		  <th scope="col">action</th>
+		</tr>
+	  </thead>
+<!--	  <tbody data-bind="foreach: project">-->
+		<tbody id="tb">
+			<tr>
+<!--				<th scope="row"><span data-bind="text: $index"/> </th>-->
+				<td><label id="title" data-bind="text: title"/> </td>
+				<td><label id="leader" data-bind="text: leader"/> </td>
+				<td><label id="starttime" data-bind="text: starttime"/> </td>
+				<td><label id="deadline" data-bind="text: deadline"/> </td>
+				<td>
+					<select data-bind="value: status">
+					  <option value=""></option>	
+					  <option value="0">pending</option>
+					  <option value="1">active</option>
+					  <option value="2">completed</option>
+					</select>
+				</td>
+				<td><label id="createtime" data-bind="text: createtime"/> </td>
+				<td><label id="detail"/> </td>
+				<td><label id="remove"/> </td>
+<!--				<td><div data-bind="html: details"></div></td>-->
+<!--				<a href="#" data-bind="click: $parent.removePerson">Remove</a>-->
+			</tr>
+		  
+		<!--<tr>
+		  <th scope="row">1</th>
+		  <td><label id="jobid" data-bind="text: jobid"/></td>
+		  <td>Otto</td>
+		  <td>@mdo</td>
+		</tr>-->
+		
+	  </tbody>
+	</table>
+	
+	<script type="text/javascript">
+		//var apiurl="https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/check"
+		//check jobid and password
+		$(document).ready(function() {
+			$(document).ready(function(){
+				var str=document.cookie;
+			});
+
+            var customerViewModel = function() {
+            var self = this;
+            self.title = ko.observable("");
+				self.leader = ko.observable("");
+				self.starttime = ko.observable("");
+				self.deadline = ko.observable("");
+				self.status = ko.observable("");
+				self.createtime = ko.observable("");
+												
+				self.searchKey = ko.observable("");
+            /*self.starttime = ko.observable("");*/
+				
+            self.getCustomerDetails = function () { //alert('1'); 
+				var apiurl="";
+												   //alert(self.searchKey());
+				if(self.searchKey()==""){
+					apiurl="https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/allproject";
+					$.ajax({
+						url:apiurl,
+						type: 'GET',
+						
+						success: function(data){
+//							var tt = document.getElementById("tt");
+//							var ttparent = tt.parentElement;
+//							ttparent.removeChild(tt);
+							
+						}
+					});
+				}else{
+					apiurl="https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/searchproject";
+				}
+												   //alert(apiurl);
+                $.ajax({
+                    url: apiurl,
+                    cache: false,
+                    type: 'GET',  
+					async: false,
+                    data: { "title": self.searchKey() },
+                    success: function (data) {//alert('function');
+								self.title(data.Item.Title),
+                        		self.leader(data.Item.Leader),
+								self.starttime(data.Item.StartTime),
+								self.deadline(data.Item.Deadline),
+								self.status(data.Item.Status),
+								self.createtime(data.Item.CreateTime)
+											  
+								var s = document.getElementById("detail");
+									var aa = document.createElement("a");
+									aa.href="projectdetail.html?title="+data.Item.Title;
+									aa.innerHTML="detail";	
+									s.appendChild(aa);
+						
+								var r = document.getElementById("remove");
+									var a = document.createElement("a");
+									a.href="";
+									a.innerHTML="remove";
+									a.onclick = function () {
+										this.style.display = 'none';
+										alert('successful remove');
+										$.ajax({
+											 url: "https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/removeproject",
+												cache: false,
+												type: 'GET',  
+												async: false,
+												data: { "title": data.Item.Title },
+												success: function(data){
+													
+												}
+										});
+
+									}
+									r.appendChild(a);
+								/*var viewModel = {
+									details: ko.observable()
+								}*/
+								//viewModel.details("<a href='https://www.baidu.com'>modify</a>")
+
+						/*if(data.Item){alert("Item");
+							//only data
+							self.projectdetail = ko.observableArray([
+										{ title: data.Item.Title, starttime: data.Item.StartTime,
+											leader: data.Item.Leader, status: data.Item.Status, 
+											deadline: data.Item.Deadline, createtime: data.Item.CreateTime}
+							]);
+						}else if(data.Items){alert("Items");
+							self.projectdetail = ko.observableArray([
+									for(var i=0;i<data.Items.length-1;i++){
+										{ title: data.Item.Title, starttime: data.Item.startTime,
+											leader: data.Items.Leader, status: data.Item.Status, 
+											deadline: data.Items.Deadline, createtime: data.Items.CreateTime},
+									}
+									{ title: data.Items[data.Items.length-1].Title, 
+										starttime: data.Items[data.Items.length-1].StartTime,
+										leader: data.Items[data.Items.length-1].Leader, 
+										status: data.Items[data.Items.length-1].Status, 
+										deadline: data.Items[data.Items.length-1].Deadline, 
+										createtime: data.Items[data.Items.length-1].CreateTime}
+							]);
+						}*/
+                    }
+                });
+						
+            };
+        }
+
+           var viewModel = new customerViewModel();
+           ko.applyBindings(viewModel);
+         });
+
+	</script>
+</body>
+</html>

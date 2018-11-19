@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="jquery-3.1.1.min.js"></script>
+    <script src="knockout-3.4.2.js"></script>
+</head>
+
+<body>
+	<h1>Add User</h1>
+	<div>
+		<div class="form-group">
+			<label for="title">Job Id</label>
+			<input type="text" class="form-control" id="jobid" aria-describedby="emailHelp" placeholder="Enter Job Id of new user" data-bind="value : jobid">
+		</div>
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input type="text" class="form-control" id="name" placeholder="" data-bind="value : name">
+		</div>
+		<div class="form-group">
+			<label for="password">Password</label>
+			<input type="text" class="form-control" id="password" placeholder="" data-bind="value : password">
+		</div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Role</span>
+				<select data-bind="value: role">
+				  <option value="1">Amin</option>
+				  <option value="2">Project Manager</option>
+				  <option value="3">Developer</option>
+				</select>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary" data-bind="click: $root.submitDetails()">Submit</button>
+	</div>
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var customerViewModel = function() {
+				var self = this;
+				self.jobid = ko.observable("");
+				self.name = ko.observable("");
+				self.role = ko.observable("");
+				self.password = ko.observable("");
+
+				self.submitDetails = function () { //alert("role="+self.role()+","+self.jobid());
+					//var mdate = new Date();
+					$.ajax({
+						url: 'https://liqkr2x8nl.execute-api.eu-west-2.amazonaws.com/dev/adduser',
+						cache: false,
+						type: 'GET',     
+						//alert("titlekey2="+self.titleKey()),
+						data: { "jobid": self.jobid(), "name": self.name(),
+							  "role": self.role(), "password": self.password()},
+						success: function (data) { //alert("length="+data.Items.length)
+							if(data.Items[0].JobId){
+								alert("successful add!");
+							}else{
+								//window.location.href = "projectsuccessadd.html"; 
+								
+							}
+
+							//alert(data.Item.JobId);
+							//self.jobid(data.Item.JobId),
+							//self.password(data.Item.Password)
+						}
+					});
+				}
+			}
+			var viewModel = new customerViewModel();
+            ko.applyBindings(viewModel);
+		});
+	</script>
+</body>
+</html>
